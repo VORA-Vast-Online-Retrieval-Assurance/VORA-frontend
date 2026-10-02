@@ -1,0 +1,49 @@
+import { useEffect, useState } from 'react'
+import { VoicePill } from '../../ui/micro/VoicePill.tsx'
+import { useSpeechToText } from './useSpeechToText.ts'
+
+type Props = {
+  onTranscript: (finalText: string) => void
+  onInterim?: (text: string) => void
+  disabled?: boolean
+  className?: string
+}
+
+const DENIED = 'Microphone blocked. Allow it in the browser’s site settings, then try again.'
+
+/**
+ * VoicePill wired to the Web Speech API: dictates into the prompt box. Unsupported browsers (anything but
+ * Chrome and Edge) get a disabled pill with an explanatory title; a blocked microphone or a failed recognition
+ * is said in words under the pill, without moving the rest of the box.
+ */
+export function VoiceInput({ onTranscript, onInterim, disabled = false, className = '' }: Props) {
+  const speech = useSpeechToText({ onFinal: onTranscript })
+  const [pillError, setPillError] = useState<string | null>(null)
+  const error = speech.error ?? pillError
+
+  useEffect(() => {
+    if (speech.interim !== '') onInterim?.(speech.interim)
+  }, [speech.interim, onInterim])
+
+  return (
+    <span className={`relative inline-flex ${className}`} title={speech.supported ? undefined : 'Voice input works in Chrome and Edge'}>
+      <VoicePill
+        ariaLabel={speech.listening ? 'Stop dictating' : 'Dictate'}
+        disabled={disabled || !speech.supported}
+        onStart={() => {
+          setPillError(null)
+          speech.start()
+        }}
+        onStop={(reason) => {
+          speech.stop()
+          if (reason === 'mic-denied') setPillError(DENIED)
+        }}
+      />
+      {error && (
+        <span role="alert" className="absolute top-full right-0 z-20 mt-1 w-max max-w-64 rounded-control border border-blocked bg-surface px-2 py-1 text-micro text-blocked">
+          {error}
+        </span>
+      )}
+    </span>
+  )
+}

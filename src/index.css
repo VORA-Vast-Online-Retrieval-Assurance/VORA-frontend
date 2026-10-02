@@ -1,0 +1,163 @@
+@import "tailwindcss";
+@import "./styles/tokens.css";
+
+/* Headlines run Mona Sans a little wide: confident, not shouting. */
+@utility font-wide {
+  font-stretch: 112%;
+}
+
+/* A restrained underline for provenance and hover states. The line sits below the glyphs
+   and cannot paint over the next line of text. */
+@utility mark {
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.14em;
+  text-decoration-skip-ink: auto;
+  transition: text-decoration-color 180ms ease;
+}
+@utility mark-off {
+  text-decoration-color: transparent;
+}
+@utility mark-on {
+  text-decoration-color: var(--mark-color);
+}
+@utility mark-yellow {
+  --mark-color: var(--color-signal);
+}
+@utility mark-structured {
+  --mark-color: var(--color-m-structured);
+}
+@utility mark-content {
+  --mark-color: var(--color-m-content);
+}
+@utility mark-rendered {
+  --mark-color: var(--color-m-rendered);
+}
+@utility mark-ai {
+  --mark-color: var(--color-m-ai);
+}
+
+/* The red pen: skipped or rejected. Always `strike` + one of strike-on / strike-off.
+   strike-off → strike-on draws the line from the left. */
+@utility strike {
+  text-decoration-line: line-through;
+  text-decoration-thickness: 2px;
+  transition: text-decoration-color 160ms ease;
+}
+@utility strike-off {
+  text-decoration-color: transparent;
+}
+@utility strike-on {
+  text-decoration-color: var(--color-blocked);
+}
+
+@layer components {
+  /* A panel: white card, hairline edge, soft light from above. */
+  .neo-panel {
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-panel);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+  }
+  /* Buttons float a little and settle when pressed. */
+  .neo-button {
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-soft);
+  }
+  .neo-button:hover:not(:disabled) {
+    translate: 0 -1px;
+    box-shadow: var(--shadow-lift);
+  }
+  .neo-button:active:not(:disabled) {
+    translate: 0 0;
+    scale: 0.98;
+    box-shadow: var(--shadow-soft);
+  }
+  .neo-button:disabled {
+    box-shadow: none;
+  }
+  .neo-lift {
+    transition: translate 360ms var(--ease-soft), box-shadow 360ms var(--ease-soft);
+  }
+  .neo-lift:hover {
+    translate: 0 -3px;
+    box-shadow: var(--shadow-lift);
+  }
+  .neo-lift:active {
+    translate: 0 0;
+    box-shadow: var(--shadow-soft);
+  }
+  .neo-enter {
+    animation: neo-enter 640ms var(--ease-out-expo) both;
+  }
+  .neo-rule {
+    border-top: 1px solid var(--color-edge);
+  }
+  @keyframes neo-enter {
+    from { opacity: 0; translate: 0 14px; filter: blur(4px); }
+    to { opacity: 1; translate: 0 0; filter: blur(0); }
+  }
+}
+
+@layer base {
+  html {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    min-height: 100dvh;
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  /* Every interactive element eases its colour changes instead of snapping. */
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  [role="tab"] {
+    transition-property: color, background-color, border-color, box-shadow, translate, scale, opacity;
+    transition-duration: 220ms;
+    transition-timing-function: var(--ease-soft);
+  }
+  input,
+  textarea,
+  select {
+    border-radius: var(--radius-control);
+  }
+  :focus-visible {
+    outline-color: var(--color-signal);
+  }
+  html {
+    scrollbar-color: var(--color-edge-strong) transparent;
+  }
+  ::selection {
+    background: var(--color-signal);
+    color: var(--color-on-signal);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    /* A staggered highlight would otherwise pop in late; with reduced motion everything is there at once. */
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}

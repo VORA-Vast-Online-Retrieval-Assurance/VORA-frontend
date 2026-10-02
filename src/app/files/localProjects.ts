@@ -1,0 +1,81 @@
+import type { DatasetTable } from '../../api/types.ts'
+
+/**
+ * Projects made from an uploaded file. The backend can't store them (no upload endpoint, and it stays
+ * unchanged), so they live in this browser's IndexedDB. Tables can be megabytes; localStorage is too small.
+ */
+export interface LocalProject {
+  id: string
+  title: string
+  fileName: string
+  fileSize: number
+  created_at: string
+  updated_at: string
+  table: DatasetTable
+  note?: string
+}
+
+export type LocalMeta = Omit<LocalProject, 'table'> & { rows: number; columns: number }
+
+const DB = 'vora'
+const STORE = 'projects'
+const listeners = new Set<() => void>()
+
+function open(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB, 1)
+    req.onupgradeneeded = () => req.result.createObjectStore(STORE, { keyPath: 'id' })
+    req.onsuccess = () => resolve(req.result)
+    req.onerror = () => reject(req.error)
+  })
+}
+
+async function run<T>(mode: IDBTransactionMode, fn: (s: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+  const db = await open()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, mode)
+    const req = fn(tx.objectStore(STORE))
+    tx.oncomplete = () => {
+      db.close()
+      resolve(req.result)
+    }
+    tx.onerror = () => reject(tx.error)
+    tx.onabort = () => reject(tx.error ?? new Error('Storage was blocked'))
+  })
+}
+
+const changed = () => listeners.forEach((l) => l())
+
+export function onLocalChange(l: () => void) {
+  listeners.add(l)
+  return () => {
+    listeners.delete(l)
+  }
+}
+
+export async function listLocal(): Promise<LocalMeta[]> {
+  const all = await run<LocalProject[]>('readonly', (s) => s.getAll())
+  return all
+    .map(({ table, ...meta }) => ({ ...meta, rows: table.rows.length, columns: table.columns.length }))
+    .sort((a, b) => b.updated_at.localeCompare(a.updated_at))
+}
+
+export const getLocal = (id: string) => run<LocalProject | undefined>('readonly', (s) => s.get(id))
+
+export async function saveLocal(p: LocalProject) {
+  await run('readwrite', (s) => s.put(p))
+  changed()
+}
+
+export async function deleteLocal(id: string) {
+  await run('readwrite', (s) => s.delete(id))
+  try {
+    localStorage.removeItem(`vora.answers.file-${id}`)
+    localStorage.removeItem(`vora.dashboard.file-${id}`)
+  } catch {
+    // nothing to clean
+  }
+  changed()
+}
+
+export const newLocalId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`

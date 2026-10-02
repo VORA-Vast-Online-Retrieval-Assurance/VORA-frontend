@@ -1,0 +1,124 @@
+/* VORA: warm paper, deep-plum ink, hairline edges, rounded corners and soft light. The wisteria accent and the
+   topographic logo set the tone. Method tints remain distinct so existing source receipts keep their meanings. */
+@theme {
+  --color-*: initial;
+
+  --color-canvas: #fbf8f3;
+  --color-surface: #ffffff;
+  --color-sunken: #f4eff8;
+  --color-line: #e9e2ef;
+  --color-line-strong: #b9a8c9;
+  /* Edges of panels, fields and rules: a hairline, never a black frame. */
+  --color-edge: #e2d9ea;
+  --color-edge-strong: #c8b6d8;
+  --color-ink: #1f1a2b;
+  --color-ink-2: #4a4058;
+  --color-ink-3: #7a6e88;
+  --color-on-ink: #fbf8f3;
+  --color-wisteria: #d9c2e8;
+  --color-lavender: #b8a9fa;
+  --color-lavender-soft: #e9e1f7;
+
+  --color-signal: #b48ad0;
+  --color-signal-hover: #a277c1;
+  --color-signal-soft: #e9e1f7;
+  --color-on-signal: #ffffff;
+  --color-cta: #2a2238;
+  --color-cta-hover: #3b3050;
+  --color-cta-danger: #ff736a;
+
+  --color-m-structured: #d4eadb;
+  --color-m-structured-line: #285f40;
+  --color-m-content: #dce7fa;
+  --color-m-content-line: #274b78;
+  --color-m-rendered: #f4dfcd;
+  --color-m-rendered-line: #7a4d28;
+  --color-m-ai: #e5cfec;
+  --color-m-ai-line: #664076;
+
+  --color-blocked: #a32043;
+
+  /* Charts: ink on paper. One series is ink with a Wisteria wash under lines. Ordered levels
+     (tiers) take a violet ramp, light to dark. Never a categorical rainbow: the method hues
+     already have meanings. */
+  --color-series: #2a2238;
+  --color-series-wash: #c9a0dc80;
+  --color-ramp-1: #eee8f4;
+  --color-ramp-2: #ccb8dc;
+  --color-ramp-3: #a68bb9;
+  --color-ramp-4: #765c8c;
+  --color-ramp-5: #33203f;
+  --color-other: #e6dfeb;
+
+  --font-display: "Mona Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Mona Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Roomier display type keeps wrapped lines clear at every viewport. */
+  --text-display: clamp(2.5rem, 5vw, 4.5rem);
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.03em;
+  --text-h1: clamp(2.25rem, 4.2vw, 3.75rem);
+  --text-h1--line-height: 1.1;
+  --text-h1--letter-spacing: -0.03em;
+  /* Editorial headlines have enough leading to separate adjacent lines. */
+  --text-section: clamp(1.9rem, 2.8vw, 2.8rem);
+  --text-section--line-height: 1.16;
+  --text-section--letter-spacing: -0.03em;
+  --text-h2: clamp(1.75rem, 2.6vw, 2.5rem);
+  --text-h2--line-height: 1.1;
+  --text-h2--letter-spacing: -0.02em;
+  --text-h3: 1.25rem;
+  --text-h3--line-height: 1.25;
+  --text-h3--letter-spacing: -0.01em;
+  --text-lead: clamp(1.125rem, 1.4vw, 1.3125rem);
+  --text-lead--line-height: 1.5;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.45;
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.35;
+  --text-micro--letter-spacing: 0.06em;
+
+  --radius-control: 0.625rem;
+  --radius-panel: 1.125rem;
+  --radius-full: 9999px;
+  --shadow-float: 0 1px 2px rgb(31 26 43 / 0.06), 0 12px 32px -12px rgb(31 26 43 / 0.22);
+  --shadow-soft: 0 1px 2px rgb(31 26 43 / 0.05), 0 6px 18px -10px rgb(31 26 43 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(31 26 43 / 0.06), 0 18px 40px -16px rgb(31 26 43 / 0.28);
+  --container-page: 84rem;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Overshooting spring-like timing for highlight, trace, and state changes.
+     JS twin: EASE_DRAW in src/ui/motion.ts. */
+  --ease-draw: cubic-bezier(0.22, 1.2, 0.36, 1);
+  /* Short tactile arrivals and hover moves. JS twin: EASE_SOFT. */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-quart: cubic-bezier(0.5, 0, 0.75, 0);
+
+  /* Text cursor: a hard blink, like a real one. */
+  --animate-caret: caret 1.05s steps(1) infinite;
+  @keyframes caret {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* A row arriving slides in with a brief lavender tint, then settles. */
+  --animate-row-in: row-in 420ms var(--ease-soft) both;
+  @keyframes row-in {
+    0% {
+      opacity: 0;
+      translate: -14px 0;
+      background-color: var(--color-lavender-soft);
+    }
+    30% {
+      opacity: 1;
+      translate: 0 0;
+      background-color: var(--color-lavender-soft);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+}
