@@ -15,9 +15,9 @@ export default defineConfig({
       output: {
         codeSplitting: {
           groups: [
-            { name: 'react', test: /node_modules[\/](react|react-dom|react-router|scheduler)[\/]/ },
-            { name: 'motion', test: /node_modules[\/](motion|motion-dom|motion-utils|framer-motion|lenis)[\/]/ },
-            { name: 'supabase', test: /node_modules[\/]@supabase[\/]/ },
+            { name: 'react', test: /node_modules[/](react|react-dom|react-router|scheduler)[/]/ },
+            { name: 'motion', test: /node_modules[/](motion|motion-dom|motion-utils|framer-motion|lenis)[/]/ },
+            { name: 'supabase', test: /node_modules[/]@supabase[/]/ },
           ],
         },
       },
