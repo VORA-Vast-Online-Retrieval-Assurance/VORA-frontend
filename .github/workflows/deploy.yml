@@ -50,12 +50,12 @@ jobs:
         run: |
           test -n "$CLOUDFLARE_API_TOKEN" || { echo 'Missing CLOUDFLARE_API_TOKEN repository secret'; exit 1; }
           test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo 'Missing CLOUDFLARE_ACCOUNT_ID repository variable'; exit 1; }
-      - name: Deploy to awdax.pages.dev
+      - name: Deploy to Cloudflare Pages (vora)
         if: github.event_name == 'push' && github.ref == 'refs/heads/phase-1'
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '4.142.0'
-          command: pages deploy dist --project-name=awdax --branch=main --commit-hash=${{ github.sha }}
+          command: pages deploy dist --project-name=vora --branch=main --commit-hash=${{ github.sha }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
